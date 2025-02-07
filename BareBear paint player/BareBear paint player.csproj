@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>BareBear_paint_player</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Arrow.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Haley.WPF" Version="5.4.4" />
+    <PackageReference Include="WPF-UI" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controls\" />
+    <Folder Include="Logic\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Arrow.png" />
+  </ItemGroup>
+
+</Project>
