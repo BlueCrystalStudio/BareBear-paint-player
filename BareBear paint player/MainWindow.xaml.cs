@@ -2,20 +2,10 @@
 using BareBear_paint_player.Logic;
 using BareBear_paint_player.Logic.Drawing;
 using BareBear_paint_player.Logic.Serialization;
-using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Xaml;
 using static BareBear_paint_player.Abstractions.Delegates;
-using static BareBear_paint_player.MainWindow;
 
 namespace BareBear_paint_player;
 
@@ -24,6 +14,7 @@ namespace BareBear_paint_player;
 /// </summary>
 public partial class MainWindow : Window
 {
+    bool isAnimationPlaying;
     Point mousePosition = new Point();
     DrawingMode drawingMode = DrawingMode.Line;
 
@@ -31,9 +22,12 @@ public partial class MainWindow : Window
     ApplicationStyleManager styleManager;
     LoadDrawingDelegate loadDrawingDelegate;
 
+    List<uint> brancheImageIndexes;
+
     public MainWindow(IStreamManager streamManager)
     {
         styleManager = new(Resources);
+        brancheImageIndexes = new();
         this.streamManager = streamManager;
 
         DataContext = this;
@@ -97,27 +91,47 @@ public partial class MainWindow : Window
         var capture = new CanvasCapture(canvasIndex, this, loadDrawingDelegate);
 
         HistoryStackPanel.Children.Add(capture);
+        brancheImageIndexes.Add(canvasIndex);
     }
 
     public void LoadDrawing(uint index)
     {
-        DrawingCanvas.Children.Clear();
-
         var loadedCanvas = streamManager.Load(index);
-
-
         var childrenList = loadedCanvas.Children.Cast<UIElement>().ToArray();
         DrawingCanvas.Children.Clear();
 
-        foreach (var c in childrenList)
+        foreach (var children in childrenList)
         {
-            loadedCanvas.Children.Remove(c);
-            DrawingCanvas.Children.Add(c);
+            loadedCanvas.Children.Remove(children);
+            DrawingCanvas.Children.Add(children);
         }
     }
 
-    private void Button_Click_1(object sender, RoutedEventArgs e)
+    private async void Button_Click_1(object sender, RoutedEventArgs e)
     {
+        // Switch state
+        isAnimationPlaying = !isAnimationPlaying;
 
+        if (!isAnimationPlaying)
+            return;
+
+        var framerate = 1000 / (Framerate.Value ??= 1);
+
+        await PlayDrawings(framerate);
+    }
+
+    private async Task PlayDrawings(double delay)
+    {
+        while (isAnimationPlaying)
+        {
+            foreach (var canvasIndex in brancheImageIndexes)
+            {
+                LoadDrawing(canvasIndex);
+                await Task.Delay((int)delay);
+
+                if (!isAnimationPlaying)
+                    break;
+            }
+        }
     }
 }
