@@ -4,5 +4,6 @@ namespace BareBear_paint_player.Logic.Serialization;
 
 public interface IStreamManager
 {
-    public void Save(UIElementCollection children);
+    public uint Save(Canvas children);
+    public Canvas Load(uint index);
 }

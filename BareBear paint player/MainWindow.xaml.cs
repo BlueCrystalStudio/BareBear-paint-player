@@ -1,4 +1,5 @@
-﻿using BareBear_paint_player.Logic;
+﻿using BareBear_paint_player.Controls;
+using BareBear_paint_player.Logic;
 using BareBear_paint_player.Logic.Drawing;
 using BareBear_paint_player.Logic.Serialization;
 using System.IO;
@@ -13,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xaml;
+using static BareBear_paint_player.Abstractions.Delegates;
+using static BareBear_paint_player.MainWindow;
 
 namespace BareBear_paint_player;
 
@@ -26,6 +29,7 @@ public partial class MainWindow : Window
 
     IStreamManager streamManager;
     ApplicationStyleManager styleManager;
+    LoadDrawingDelegate loadDrawingDelegate;
 
     public MainWindow(IStreamManager streamManager)
     {
@@ -33,6 +37,7 @@ public partial class MainWindow : Window
         this.streamManager = streamManager;
 
         DataContext = this;
+        loadDrawingDelegate += LoadDrawing;
 
         InitializeComponent();
     }
@@ -88,6 +93,31 @@ public partial class MainWindow : Window
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        streamManager.Save(DrawingCanvas.Children);
+        var canvasIndex = streamManager.Save(DrawingCanvas);
+        var capture = new CanvasCapture(canvasIndex, this, loadDrawingDelegate);
+
+        HistoryStackPanel.Children.Add(capture);
+    }
+
+    public void LoadDrawing(uint index)
+    {
+        DrawingCanvas.Children.Clear();
+
+        var loadedCanvas = streamManager.Load(index);
+
+
+        var childrenList = loadedCanvas.Children.Cast<UIElement>().ToArray();
+        DrawingCanvas.Children.Clear();
+
+        foreach (var c in childrenList)
+        {
+            loadedCanvas.Children.Remove(c);
+            DrawingCanvas.Children.Add(c);
+        }
+    }
+
+    private void Button_Click_1(object sender, RoutedEventArgs e)
+    {
+
     }
 }
