@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BareBear_paint_player"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:hw="http://schemas.hpod9.com/haley/wpf"
         x:Class="BareBear_paint_player.MainWindow"
         mc:Ignorable="d"
         Title="BareBear paint player" 
@@ -13,62 +14,93 @@
         WindowState="Maximized">
 
     <!--Main Application Layout-->
-    <Grid Background="#F8262537">
+    <Grid Background="#FF1A1A1A">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="19*"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="8*"/>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="10*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <RadioButton
-            Name="VersionButton"
-            Grid.Column="1" Grid.Row="1" 
-            Content="Draw" 
-            HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" 
-            Background="#E552B9FE" Foreground="White"
-            BorderBrush="#00707070"/>
-
-        <RadioButton
-            Name="RemoveButton"
-            Grid.Column="1" Grid.Row="1" 
-            Content="Remove" 
-            HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" 
-            Background="#E552B9FE" Foreground="White"
-            BorderBrush="#00707070"/>
+        <hw:ColorPicker Name="ColorPicker"
+                        Margin="4"
+                        Grid.ColumnSpan="1" Grid.Row="1" Grid.Column="3"
+                        HorizontalAlignment="Center" VerticalAlignment="Top"
+                        Height="250" Width="250" Grid.RowSpan="2"
+                        SelectedBrush="BurlyWood"/>
 
         <StackPanel Margin="0,5,0,0" Grid.RowSpan="2" Grid.Row="1">
             <RadioButton Content="Drawing" HorizontalAlignment="Left" Margin="8" Grid.Row="1" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-            <RadioButton Content="Branches" HorizontalAlignment="Left" Margin="8" Grid.Row="1" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+            <RadioButton Content="Branches" HorizontalAlignment="Left" Margin="8" Grid.Row="1" VerticalAlignment="Top" Foreground="White" IsChecked="False"/>
         </StackPanel>
 
         <StackPanel 
             x:Name="HistoryStackPanel"
-            Margin="2,2,2,2"
-            Grid.RowSpan="1" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-            HorizontalAlignment="Left" VerticalAlignment="Center"
+            Margin="2,0,0,0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
+            HorizontalAlignment="Stretch" VerticalAlignment="Center"
             Background="#33000000">
-            
+
             <Button HorizontalAlignment="Left" Margin="4"  VerticalAlignment="Top" Foreground="{x:Null}" Background="#FF4FFF90">
                 <Image Width="25" Height="25" 
                        VerticalAlignment="Center" HorizontalAlignment="Left"
                        OpacityMask="#FF4FFF90" Source="/Arrow.png"/>
             </Button>
+            
+            
+            
         </StackPanel>
         <Grid Margin="0,43,0,43" Grid.RowSpan="3"/>
-        
+
         <Canvas 
             MouseDown="DrawingCanvas_MouseDown"
             MouseMove="DrawingCanvas_MouseMove"
             x:Name="DrawingCanvas"
-            Grid.Column="2" Grid.Row="1" Background="White"/>
-        <Slider x:Name="ThicknessSlider" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,175,0,0" Grid.Row="1" VerticalAlignment="Top" Width="60" Minimum="1" Maximum="5" Value="1" Foreground="{x:Null}"/>
-        <Label Grid.Column="1" Content="Size" HorizontalAlignment="Left" Margin="0,150,0,0" Grid.Row="1" VerticalAlignment="Top" Background="{x:Null}" Foreground="#FFFEC04A"/>
-        <Label Name="SizeDisplay" Grid.Column="1" Content="{Binding Value, ElementName=ThicknessSlider, StringFormat={}{0:#.00}}" HorizontalAlignment="Left" Margin="60,170,0,0" Grid.Row="1" VerticalAlignment="Top" HorizontalContentAlignment="Center" Background="{x:Null}" Foreground="White" VerticalContentAlignment="Center"/>
-    
+            Grid.Column="2" Grid.Row="1" Background="White" Margin="4"/>
+        
+        <!--ColorDisplay-->
+        <Border Grid.Column="3" Grid.Row="1" Width="100" Height="40" Margin="0,275,0,0" VerticalAlignment="Top">
+            <Rectangle Grid.Column="3" HorizontalAlignment="Stretch" RadiusX="8" RadiusY="8" Stroke="White" VerticalAlignment="Stretch" Fill="{Binding SelectedBrush, ElementName=ColorPicker}"/>
+        </Border>
+        
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Fill="#FF2E2E2E" Panel.ZIndex="0" Margin="4" RadiusX="8" RadiusY="8" />
+            <Rectangle Grid.Row="1" Fill="#FF2E2E2E" Panel.ZIndex="0" Margin="4" RadiusX="8" RadiusY="8" />
+            
+            <RadioButton
+                Name="DrawButton"
+                IsChecked="True"
+                Grid.Row="0" 
+                Content="Draw" 
+                HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top" 
+                Background="#E552B9FE" Foreground="White"
+                BorderBrush="#00707070"
+                Checked="DrawButton_Checked"/>
+
+            <RadioButton
+                Name="RemoveButton"
+                Grid.Column="1" Grid.Row="0" 
+                Content="Remove" 
+                HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" 
+                Background="#E552B9FE" Foreground="White"
+                BorderBrush="#00707070"
+                Checked="RemoveButton_Checked"/>
+
+            <Slider x:Name="ThicknessSlider" Grid.Column="1" HorizontalAlignment="Center" Margin="0,25,0,0" Grid.Row="1" VerticalAlignment="Top" Width="40" Minimum="1" Maximum="5" Value="1" Foreground="{x:Null}" SmallChange="1"/>
+            <Label Grid.Column="1" Content="Size" HorizontalAlignment="Left" Margin="8,4,0,0" Grid.Row="1" VerticalAlignment="Top" Background="{x:Null}" Foreground="#FFFEC04A"/>
+            <TextBlock Name="SizeDisplay" Grid.Column="1" Text="{Binding Value, ElementName=ThicknessSlider, StringFormat={}{0:#.00}}" HorizontalAlignment="Left" Margin="70,4,0,0" Grid.Row="1" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
+
+        </Grid>
+        <Button Grid.Column="3" Content="Add" Margin="4,325,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click"/>
+
     </Grid>
 </Window>

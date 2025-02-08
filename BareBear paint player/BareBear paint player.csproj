@@ -15,12 +15,13 @@
 
   <ItemGroup>
     <PackageReference Include="Haley.WPF" Version="5.4.4" />
+    <PackageReference Include="Haley.WPF.IconsPack" Version="1.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
     <PackageReference Include="WPF-UI" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Controls\" />
-    <Folder Include="Logic\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
