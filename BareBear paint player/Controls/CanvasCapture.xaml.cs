@@ -29,7 +29,7 @@ public partial class CanvasCapture : UserControl
         uint index,
         MainWindow mainWindowRefference,
         LoadDrawingDelegate onClickCallback,
-        Image image = null)
+        Image? image = null)
     {
         InitializeComponent();
 
