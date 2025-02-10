@@ -19,12 +19,12 @@ public class RepozitoryManager
         this.mainWindowViewModel = mainWindowViewModel;
     }
 
-    public void CreateRepozitory(string name)
+    public bool CreateRepozitory(string name)
     {
         if (Directory.Exists(ApplicationPaths.SavePath + name))
         {
             Logger.Log("Repozitory with this name already exists!");
-            return;
+            return false;
         }
 
         Directory.CreateDirectory(ApplicationPaths.SavePath + name);
@@ -32,6 +32,8 @@ public class RepozitoryManager
         CurrentRepozitory = name;
         mainWindowViewModel.CurrentRepozitory = name;
         mainWindowViewModel.Repozitories = CreateDisplayableRepozitories(repozitories);
+
+        return true;
     }
 
     /// <summary>

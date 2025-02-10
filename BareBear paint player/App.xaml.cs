@@ -2,8 +2,6 @@
 using BareBear_paint_player.Logic.Serialization;
 using BareBear_paint_player.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace BareBear_paint_player;

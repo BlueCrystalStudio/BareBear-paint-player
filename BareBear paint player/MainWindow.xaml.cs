@@ -41,11 +41,14 @@ public partial class MainWindow : Window
         loadDrawingDelegate += LoadDrawing;
 
         currentRepozitory = repozitoryManager.CurrentRepozitory;
+        Logger.SetDisplayLogDelegate(DisplayOnLogger);
 
         InitializeComponent();
         DataContext = viewModel;
 
         AddFramesForCurrentRepo();
+
+        Logger.Log("Application started!");
     }
 
     private void DrawingCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -183,19 +186,23 @@ public partial class MainWindow : Window
 
     private void NewRepozitoryButton_Click(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrEmpty(NewRepozitoryNameTextBox.Text))
+        var newRepozitoryName = NewRepozitoryNameTextBox.Text;
+
+        if (string.IsNullOrEmpty(newRepozitoryName))
         {
             Logger.Log("Repozitory name cannot be empty!");
             return;
         }
 
-        if(NewRepozitoryNameTextBox.Text.Contains(' '))
+        if(newRepozitoryName.Contains(' '))
         {
-            Logger.Log("Name can not contain whitespaces!");
+            Logger.Log("Repozitory name can not contain whitespaces!");
             return;
         }
 
-        repozitoryManager.CreateRepozitory(NewRepozitoryNameTextBox.Text);
+        var isRepozitoryCreated = repozitoryManager.CreateRepozitory(newRepozitoryName);
+
+        Logger.Log(isRepozitoryCreated ? $"Repozitory {newRepozitoryName} created!" : $"Repozitory creation failed!");
     }
 
     private void Repozitories_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -208,5 +215,14 @@ public partial class MainWindow : Window
         AddFramesForCurrentRepo();
 
         DrawingCanvas.Children.Clear();
+    }
+
+    private void DisplayOnLogger(string message)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            log.AppendText(Logger.CreateTimestamp() + message);
+            log.AppendText(Environment.NewLine);
+        });
     }
 }

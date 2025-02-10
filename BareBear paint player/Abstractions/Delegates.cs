@@ -9,4 +9,5 @@ namespace BareBear_paint_player.Abstractions;
 public class Delegates
 {
     public delegate void LoadDrawingDelegate(uint index);
+    public delegate void DisplayLogDelegate(string message);
 }

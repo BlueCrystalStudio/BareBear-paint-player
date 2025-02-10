@@ -123,6 +123,15 @@
         
         <ui:NumberBox Name="Framerate" Grid.Row="2" Grid.Column="1" Width="120" HorizontalAlignment="Left" Minimum="1" Value="25" Maximum="60"/>
 
+        <!--Logger-->
+        <Label Grid.Column="3" Content="Log" HorizontalAlignment="Left" Margin="8,0,0,244" Grid.Row="1" VerticalAlignment="Bottom" Background="{x:Null}" Foreground="#FFFEC04A"/>
+        <ui:RichTextBox Name="log"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
+                        Height="240"
+                        Margin="4,4"
+                        Grid.Column="3" Grid.Row="1" FontSize="6" FontFamily="Segoe UI Light"/>
+
+        <!--Copyright @ Tomas Petrlik - Blue Crystal Studio-->
         <Label Grid.Row="2" Grid.ColumnSpan="4" Content="Copyright @ Tomas Petrlik - Blue Crystal Studio" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#19FFFFFF"/>
     </Grid>
 </Window>
