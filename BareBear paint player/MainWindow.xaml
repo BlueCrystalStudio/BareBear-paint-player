@@ -90,8 +90,7 @@
                 HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top" 
                 Background="#E552B9FE" Foreground="White"
                 BorderBrush="#00707070"
-                Checked="DrawButton_Checked"
-                IsHitTestVisible="False"/>
+                Checked="DrawButton_Checked"/>
 
             <RadioButton
                 Name="RemoveButton"
