@@ -1,14 +1,28 @@
-﻿using BareBear_paint_player.Logic.LocalRepozitories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace BareBear_paint_player.ViewModels;
 
 public sealed class MainWindowViewModel() : ViewModelBase
 {
-    public string[] Repozitories { get; set; } = ["Main"];
-    public string CurrentRepozitory { get; set; } = "Main";
+    private string[] repozitories = ["Main"];
+    private string currentRepozitory = "Main";
+
+    public string[] Repozitories 
+    { 
+        get => repozitories; 
+        set { 
+            repozitories = value; 
+            OnPropertyChanged(); 
+        }
+    }
+
+    public string CurrentRepozitory
+    { 
+        get => currentRepozitory; 
+        set
+        {
+            currentRepozitory = value;
+            OnPropertyChanged();
+        }
+    }
 }

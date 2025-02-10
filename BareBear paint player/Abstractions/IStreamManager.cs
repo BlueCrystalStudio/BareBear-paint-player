@@ -6,4 +6,5 @@ public interface IStreamManager
 {
     public uint Save(Canvas children);
     public Canvas Load(uint index);
+    uint[] GetIndexes();
 }

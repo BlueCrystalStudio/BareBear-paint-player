@@ -30,6 +30,6 @@ public partial class App : Application
         services.AddSingleton<IStreamManager, CanvasStreamManager>();
         services.AddSingleton<RepozitoryManager>();
         services.AddSingleton<MainWindow>();
-        services.AddTransient<MainWindowViewModel>();
+        services.AddSingleton<MainWindowViewModel>();
     }
 }

@@ -6,6 +6,8 @@ using BareBear_paint_player.Logic.Serialization;
 using BareBear_paint_player.ViewModels;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static BareBear_paint_player.Abstractions.Delegates;
 
@@ -42,6 +44,8 @@ public partial class MainWindow : Window
 
         InitializeComponent();
         DataContext = viewModel;
+
+        AddFramesForCurrentRepo();
     }
 
     private void DrawingCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -93,14 +97,34 @@ public partial class MainWindow : Window
     private void RemoveButton_Checked(object sender, RoutedEventArgs e) => drawingMode = DrawingMode.Remove;
     private void DrawButton_Checked(object sender, RoutedEventArgs e) => drawingMode = DrawingMode.Line;
 
-    // Add capture
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void AddFrameButton_Click(object sender, RoutedEventArgs e)
     {
         var canvasIndex = streamManager.Save(DrawingCanvas);
         var capture = new CanvasCapture(canvasIndex, this, loadDrawingDelegate);
 
         HistoryStackPanel.Children.Add(capture);
+
+        if (!brancheImageIndexesMap.ContainsKey(currentRepozitory))
+            brancheImageIndexesMap.Add(currentRepozitory, new List<uint>());
+
         brancheImageIndexesMap[currentRepozitory].Add(canvasIndex);
+    }
+
+    public void AddFramesForCurrentRepo()
+    {
+        HistoryStackPanel.Children.Clear();
+
+        if (!brancheImageIndexesMap.ContainsKey(currentRepozitory))
+            brancheImageIndexesMap.Add(currentRepozitory, new List<uint>());
+
+        var canvasIndexes = streamManager.GetIndexes();
+        foreach (var index in canvasIndexes)
+        {
+            var capture = new CanvasCapture(index, this, loadDrawingDelegate);
+
+            HistoryStackPanel.Children.Add(capture);
+            brancheImageIndexesMap[currentRepozitory].Add(index);
+        }
     }
 
     public void LoadDrawing(uint index)
@@ -124,8 +148,15 @@ public partial class MainWindow : Window
             return;
         }
 
+        
         // Switch state
         isAnimationPlaying = !isAnimationPlaying;
+
+        // Change icon - TODO: Create & Use convertor
+        PlayButtonImage.Source =
+            isAnimationPlaying ?
+            new BitmapImage(new Uri(@"Images/stop-button.png", UriKind.Relative)) :
+            new BitmapImage(new Uri(@"Images/PlayIcon.png", UriKind.Relative));
 
         if (!isAnimationPlaying)
             return;
@@ -159,5 +190,17 @@ public partial class MainWindow : Window
         }
 
         repozitoryManager.CreateRepozitory(NewRepozitoryNameTextBox.Text);
+    }
+
+    private void Repozitories_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        var selectedRepozitory = (string)Repozitories.SelectedItem;
+        if (repozitoryManager.ChangeRepozitory(selectedRepozitory) is false)
+            return;
+
+        currentRepozitory = selectedRepozitory;
+        AddFramesForCurrentRepo();
+
+        DrawingCanvas.Children.Clear();
     }
 }

@@ -25,7 +25,7 @@ class CanvasStreamManager : IStreamManager
     }
 
     /// <summary>
-    /// Saves <see cref=":children"/> to <see cref=":SavePath"/>
+    /// Saves <see cref="Canvas"/> to RepozitoryPath
     /// </summary>
     /// <param name="canvas">Saved object</param>
     /// <returns>Index of saved collection</returns>
@@ -33,7 +33,7 @@ class CanvasStreamManager : IStreamManager
     {
         var xaml = XamlWriter.Save(canvas);
 
-        filesInRepozitoryCount++;
+        filesInRepozitoryCount = GetFilesCount() + 1;
         File.WriteAllText(Path.Combine(RepozitoryPath, FileName), xaml);
 
         return filesInRepozitoryCount;
@@ -56,4 +56,13 @@ class CanvasStreamManager : IStreamManager
 
     private string GetFileName(uint index) => $"Canvas{index}.xaml";
     private uint GetFilesCount() => (uint)Directory.GetFiles(RepozitoryPath, "*", SearchOption.AllDirectories).Length;
+
+    public uint[] GetIndexes()
+    {
+        var indexes = Directory.GetFiles(RepozitoryPath, "*.xaml", SearchOption.AllDirectories)
+            .Select(x => uint.Parse(Path.GetFileNameWithoutExtension(x).Substring(6)))
+            .ToArray();
+
+        return indexes;
+    }
 }

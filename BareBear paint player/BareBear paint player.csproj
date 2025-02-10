@@ -27,6 +27,7 @@
   <ItemGroup>
     <Resource Include="Images\PlayIcon.png" />
     <Resource Include="Images\White plus icon.png" />
+    <Resource Include="Images\stop-button.png" />
   </ItemGroup>
 
   <ItemGroup>

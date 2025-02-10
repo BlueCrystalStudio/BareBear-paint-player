@@ -13,11 +13,9 @@ public class RepozitoryManager
     public RepozitoryManager(MainWindowViewModel mainWindowViewModel)
     {
         repozitories = CheckAllRepozitories();
-        mainWindowViewModel.Repozitories = repozitories;
+        mainWindowViewModel.Repozitories = CreateDisplayableRepozitories(repozitories);
         this.mainWindowViewModel = mainWindowViewModel;
     }
-
-    private string[] CheckAllRepozitories() => Directory.GetDirectories(ApplicationPaths.SavePath);
 
     public void CreateRepozitory(string name)
     {
@@ -28,6 +26,35 @@ public class RepozitoryManager
         }
 
         Directory.CreateDirectory(ApplicationPaths.SavePath + name);
-        repozitories.Append(name);
+        repozitories = [.. repozitories, ApplicationPaths.SavePath + name];
+        CurrentRepozitory = name;
+        mainWindowViewModel.CurrentRepozitory = name;
+        mainWindowViewModel.Repozitories = CreateDisplayableRepozitories(repozitories);
     }
+
+    /// <summary>
+    /// Attempts to change current repozitory to the one with <see cref="name"/>
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>True if Repozitory with <see cref="name"/> exists</returns>
+    public bool ChangeRepozitory(string name)
+    {
+        if (!repozitories.Contains(ApplicationPaths.SavePath + name))
+        {
+            Logger.Log("Repozitory with this name does not exist!");
+            return false;
+        }
+
+        CurrentRepozitory = name;
+        mainWindowViewModel.CurrentRepozitory = name;
+        return true;
+    }
+
+    private string[] CreateDisplayableRepozitories(string[] repozitoriesPath)
+    {
+        var displayableRepos = repozitoriesPath.Select(x => x.Split('\\').Last()).ToArray();
+        return displayableRepos;
+    }
+
+    private string[] CheckAllRepozitories() => Directory.GetDirectories(ApplicationPaths.SavePath);
 }
