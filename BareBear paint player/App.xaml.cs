@@ -1,4 +1,6 @@
-﻿using BareBear_paint_player.Logic.Serialization;
+﻿using BareBear_paint_player.Logic.LocalRepozitories;
+using BareBear_paint_player.Logic.Serialization;
+using BareBear_paint_player.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -26,6 +28,8 @@ public partial class App : Application
     public void ConfigureServices(ServiceCollection services)
     {
         services.AddSingleton<IStreamManager, CanvasStreamManager>();
+        services.AddSingleton<RepozitoryManager>();
         services.AddSingleton<MainWindow>();
+        services.AddTransient<MainWindowViewModel>();
     }
 }

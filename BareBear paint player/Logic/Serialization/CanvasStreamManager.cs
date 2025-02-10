@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using BareBear_paint_player.Logic.LocalRepozitories;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using Path = System.IO.Path;
@@ -8,15 +9,19 @@ namespace BareBear_paint_player.Logic.Serialization;
 
 class CanvasStreamManager : IStreamManager
 {
-    uint filesCount;
-    const string SavePath = @"C:\PaintPlayer\CanvasStorage\";
-    string FileName => $"Canvas{filesCount}.xaml";
+    uint filesInRepozitoryCount;
+    
+    string FileName => $"Canvas{filesInRepozitoryCount}.xaml";
+    string RepozitoryPath => Path.Combine(ApplicationPaths.SavePath, repozitoryManager.CurrentRepozitory);
 
-    public CanvasStreamManager() 
+    RepozitoryManager repozitoryManager;
+
+    public CanvasStreamManager(RepozitoryManager repozitoryManager) 
     {
-        Directory.CreateDirectory(SavePath);    // This only create directory if it does not exist yet
+        this.repozitoryManager = repozitoryManager;
+        Directory.CreateDirectory(RepozitoryPath);    // This only create directory if it does not exist yet
 
-        filesCount = GetFilesCount();
+        filesInRepozitoryCount = GetFilesCount();
     }
 
     /// <summary>
@@ -26,17 +31,21 @@ class CanvasStreamManager : IStreamManager
     /// <returns>Index of saved collection</returns>
     public uint Save(Canvas canvas)
     {
-        string xaml = XamlWriter.Save(canvas);
+        var xaml = XamlWriter.Save(canvas);
 
-        filesCount++;
-        File.WriteAllText(Path.Combine(SavePath, FileName), xaml);
+        filesInRepozitoryCount++;
+        File.WriteAllText(Path.Combine(RepozitoryPath, FileName), xaml);
 
-        return filesCount;
+        return filesInRepozitoryCount;
     }
 
     public Canvas Load(uint index)
     {
-        FileStream stream = File.Open(Path.Combine(SavePath, GetFileName(index)), FileMode.Open, FileAccess.Read);
+        var stream = File.Open(
+            Path.Combine(
+                RepozitoryPath,
+                GetFileName(index)), FileMode.Open, FileAccess.Read);
+
         var loadedCanvas = XamlReader.Load(stream) as Canvas;
 
         if(loadedCanvas is null)
@@ -46,5 +55,5 @@ class CanvasStreamManager : IStreamManager
     }
 
     private string GetFileName(uint index) => $"Canvas{index}.xaml";
-    private uint GetFilesCount() => (uint)Directory.GetFiles(SavePath, "*", SearchOption.AllDirectories).Length;
+    private uint GetFilesCount() => (uint)Directory.GetFiles(RepozitoryPath, "*", SearchOption.AllDirectories).Length;
 }

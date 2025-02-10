@@ -1,7 +1,9 @@
 ﻿using BareBear_paint_player.Controls;
 using BareBear_paint_player.Logic;
 using BareBear_paint_player.Logic.Drawing;
+using BareBear_paint_player.Logic.LocalRepozitories;
 using BareBear_paint_player.Logic.Serialization;
+using BareBear_paint_player.ViewModels;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shapes;
@@ -15,25 +17,31 @@ namespace BareBear_paint_player;
 public partial class MainWindow : Window
 {
     bool isAnimationPlaying;
+    string currentRepozitory;
     Point mousePosition = new Point();
     DrawingMode drawingMode = DrawingMode.Line;
 
     IStreamManager streamManager;
     ApplicationStyleManager styleManager;
     LoadDrawingDelegate loadDrawingDelegate;
+    RepozitoryManager repozitoryManager;
+    Dictionary<string, List<uint>> brancheImageIndexesMap;
 
-    List<uint> brancheImageIndexes;
-
-    public MainWindow(IStreamManager streamManager)
+    public MainWindow(
+        IStreamManager streamManager,
+        MainWindowViewModel viewModel,
+        RepozitoryManager repozitoryManager)
     {
         styleManager = new(Resources);
-        brancheImageIndexes = new();
+        brancheImageIndexesMap = new();
         this.streamManager = streamManager;
-
-        DataContext = this;
+        this.repozitoryManager = repozitoryManager;
         loadDrawingDelegate += LoadDrawing;
 
+        currentRepozitory = repozitoryManager.CurrentRepozitory;
+
         InitializeComponent();
+        DataContext = viewModel;
     }
 
     private void DrawingCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -85,13 +93,14 @@ public partial class MainWindow : Window
     private void RemoveButton_Checked(object sender, RoutedEventArgs e) => drawingMode = DrawingMode.Remove;
     private void DrawButton_Checked(object sender, RoutedEventArgs e) => drawingMode = DrawingMode.Line;
 
+    // Add capture
     private void Button_Click(object sender, RoutedEventArgs e)
     {
         var canvasIndex = streamManager.Save(DrawingCanvas);
         var capture = new CanvasCapture(canvasIndex, this, loadDrawingDelegate);
 
         HistoryStackPanel.Children.Add(capture);
-        brancheImageIndexes.Add(canvasIndex);
+        brancheImageIndexesMap[currentRepozitory].Add(canvasIndex);
     }
 
     public void LoadDrawing(uint index)
@@ -109,6 +118,12 @@ public partial class MainWindow : Window
 
     private async void Button_Click_1(object sender, RoutedEventArgs e)
     {
+        if(brancheImageIndexesMap[currentRepozitory].Count is 0)
+        {
+            Logger.Log("No drawings to play!");
+            return;
+        }
+
         // Switch state
         isAnimationPlaying = !isAnimationPlaying;
 
@@ -124,7 +139,7 @@ public partial class MainWindow : Window
     {
         while (isAnimationPlaying)
         {
-            foreach (var canvasIndex in brancheImageIndexes)
+            foreach (var canvasIndex in brancheImageIndexesMap[currentRepozitory])
             {
                 LoadDrawing(canvasIndex);
                 await Task.Delay((int)delay);
@@ -133,5 +148,16 @@ public partial class MainWindow : Window
                     break;
             }
         }
+    }
+
+    private void NewRepozitoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(NewRepozitoryNameTextBox.Text))
+        {
+            Logger.Log("Repozitory name cannot be empty!");
+            return;
+        }
+
+        repozitoryManager.CreateRepozitory(NewRepozitoryNameTextBox.Text);
     }
 }

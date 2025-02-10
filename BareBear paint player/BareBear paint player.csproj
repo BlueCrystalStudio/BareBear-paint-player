@@ -11,6 +11,10 @@
 
   <ItemGroup>
     <None Remove="Arrow.png" />
+    <None Remove="icons8-plus-50.png" />
+    <None Remove="PlayIcon.png" />
+    <None Remove="Plus button.png" />
+    <None Remove="White plus icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,11 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <Resource Include="Images\PlayIcon.png" />
+    <Resource Include="Images\White plus icon.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Arrow.png" />
+    <Folder Include="Converters\" />
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,7 @@ using System.Windows.Documents;
 using System.Windows;
 using Wpf.Ui.Appearance;
 using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace BareBear_paint_player.Logic
 {
