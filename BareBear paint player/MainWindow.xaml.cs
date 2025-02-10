@@ -189,6 +189,12 @@ public partial class MainWindow : Window
             return;
         }
 
+        if(NewRepozitoryNameTextBox.Text.Contains(' '))
+        {
+            Logger.Log("Name can not contain whitespaces!");
+            return;
+        }
+
         repozitoryManager.CreateRepozitory(NewRepozitoryNameTextBox.Text);
     }
 
