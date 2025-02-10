@@ -12,6 +12,8 @@ public class RepozitoryManager
 
     public RepozitoryManager(MainWindowViewModel mainWindowViewModel)
     {
+        Directory.CreateDirectory(ApplicationPaths.SavePath + CurrentRepozitory);
+
         repozitories = CheckAllRepozitories();
         mainWindowViewModel.Repozitories = CreateDisplayableRepozitories(repozitories);
         this.mainWindowViewModel = mainWindowViewModel;
